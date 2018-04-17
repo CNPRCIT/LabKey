@@ -1,0 +1,35 @@
+---
+## Critical Updates and Security Updates are only applied here
+## Uncomment out those you want applied or visit 
+## https://docs.ansible.com/ansible/latest/win_updates_module.html
+## for a full list of choices.
+
+- hosts: all
+
+  tasks:
+  # Check if there are missing updates
+  - block:
+    - name: Check for missing updates.
+      win_updates:
+        state: searched
+#        category_names: "{{ win_updates_categories }}"
+        category_names:
+          - CriticalUpdates
+          - SecurityUpdates
+      register: update_count
+      ignore_errors: yes
+    
+  - block:
+    - name: Install missing updates.
+      win_updates:
+        category_names:
+          - CriticalUpdates
+          - SecurityUpdates
+      register: update_result
+    
+    - name: Reboot if needed
+      win_reboot:
+        shutdown_timeout_sec: 1200
+      when: update_result.reboot_required
+      ignore_errors: yes
+    when: update_count.found_update_count|int >= 1
