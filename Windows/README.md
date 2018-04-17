@@ -1,4 +1,4 @@
-# Ansible and Windows
+# Windows
 This repo contains some scripts and other stuff that can be useful when using
 Ansible with Windows hosts.
 
