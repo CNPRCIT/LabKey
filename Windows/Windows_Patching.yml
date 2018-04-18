@@ -1,7 +1,6 @@
 ---
-## Critical Updates and Security Updates are only applied here
-## Uncomment out those you want applied or visit 
-## https://docs.ansible.com/ansible/latest/win_updates_module.html
+## CNPRC Admins update with Critical and Security patches only.
+## Visit https://docs.ansible.com/ansible/latest/win_updates_module.html
 ## for a full list of choices.
 
 - hosts: all
@@ -18,7 +17,7 @@
           - SecurityUpdates
       register: update_count
       ignore_errors: yes
-    
+
   - block:
     - name: Install missing updates.
       win_updates:
@@ -26,7 +25,7 @@
           - CriticalUpdates
           - SecurityUpdates
       register: update_result
-    
+
     - name: Reboot if needed
       win_reboot:
         shutdown_timeout_sec: 1200
