@@ -1,7 +1,7 @@
 ---
 ## CNPRC Admins update with Critical and Security patches only.
 ## Visit https://docs.ansible.com/ansible/latest/win_updates_module.html
-## for a full list of choices.
+## for a full list of options.
 
 - hosts: all
 
@@ -11,13 +11,13 @@
     - name: Check for missing updates.
       win_updates:
         state: searched
-#        category_names: "{{ win_updates_categories }}"
         category_names:
           - CriticalUpdates
           - SecurityUpdates
       register: update_count
       ignore_errors: yes
 
+  # Inistall missing updates
   - block:
     - name: Install missing updates.
       win_updates:
