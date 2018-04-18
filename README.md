@@ -1,2 +1,2 @@
 # Ansible
-Repository for CNPRC Ansible / Tower playbooks.
+CNPRC's Ansible playbook repository to manage Windows and Linux endpoints.
