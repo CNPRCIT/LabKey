@@ -25,6 +25,7 @@
         category_names:
           - CriticalUpdates
           - SecurityUpdates
+          - UpdateRollups
       register: update_result
 
     - name: Reboot if needed
