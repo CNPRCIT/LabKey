@@ -14,7 +14,7 @@
         category_names:
           - CriticalUpdates
           - SecurityUpdates
-          - ImportantUpdates
+          - UpdateRollups
       register: update_count
       ignore_errors: yes
 
