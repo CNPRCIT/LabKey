@@ -3,11 +3,10 @@
   gather_facts: no
   vars:
     win_update_categories:
-        - CriticalUpdates
-        - DefinitionUpdates
-        - SecurityUpdates
-        - Updates
-        - UpdateRollups
+          - CriticalUpdates
+          - SecurityUpdates
+          - UpdateRollups
+          - Updates
 
   tasks:
   # Check if there are missing Critical and Security Updates
