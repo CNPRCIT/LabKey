@@ -1,1 +1,127 @@
+---
+- hosts: all
+  become: true
+  gather_facts: False
+
+  handlers:
+    - name: Wait for system.
+      local_action: wait_for host={{ ansible_ssh_host }} port=22 state=started delay=30 timeout=60
+      become: False
+
+  tasks:
+    - name: Updates a server
+      apt:
+        update_cache: yes
+
+    - name: Install python software properties
+      apt: 
+        name: python-software-properties
+        state: latest
+
+    - name: Add Oracle Java Repo
+      apt_repository: 
+        repo: 'ppa:webupd8team/java'
+        state: present
+        update_cache: yes
+
+    - name: Accept Java 8 License
+      debconf:
+        name: 'oracle-java8-installer'
+        question: 'shared/accepted-oracle-license-v1-1'
+        value: 'true'
+        vtype: 'select'
+
+    - name: Install Oracle Java 8
+      apt: 
+        name: 
+        - oracle-java8-installer
+        - ca-certificates
+        - oracle-java8-set-default
+        state: latest
+
+    - name: Add Tomcat Group
+      group:
+        name: tomcat
+
+    - name: Add Tomcat User
+      user:
+        name: tomcat
+        group: tomcat
+        home: /usr/share/tomcat
+        create_home: no
+
+    - name: Download and Unarchive Apache Tomcat 8.5.9
+      unarchive:
+        src: https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.9/bin/apache-tomcat-8.5.9.tar.gz
+        dest: /opt
+        remote_src: yes
+
+    - name: Move Extracted folder to Tomcat
+      command: mv /opt/apache-tomcat-8.5.9 /opt/tomcat
+
+    - name: Change Ownership of Tomcat directory
+      file:
+        path: /opt/tomcat
+        state: directory
+        owner: tomcat
+        group: tomcat
+        recurse: yes
+
+    - name: Change tomcat bin files to executable
+      file:
+        path: /opt/tomcat/bin
+        state: directory
+        mode: '+x'
+        recurse: yes
+
+    - name: Setup Tomcat Service
+      blockinfile:
+        path: /etc/systemd/system/tomcat.service
+        create: yes
+        block: |
+          [Unit]
+          Description=Apache Tomcat 8
+          After=syslog.target network.target
+
+          [Service]
+          User=tomcat
+          Group=tomcat
+          Type=forking
+          Environment=CATALINA_PID=/opt/tomcat/tomcat.pid
+          Environment=CATALINA_HOME=/opt/tomcat
+          Environment=CATALINA_BASE=/opt/tomcat
+          ExecStart=/opt/tomcat/bin/startup.sh
+          ExecStop=/opt/tomcat/bin/shutdown.sh
+          Restart=on-failure
+
+          [Install]
+          WantedBy=multi-user.target
+
+#    - name: System Daemon Reload
+#      shell: systemctl daemon-reload
+
+    - name: Start and enable Tomcat Service
+      systemd:
+        name: tomcat
+        state: started
+        enabled: yes
+        daemon_reload: yes
+
+    - name: Wait for Tomcat to start
+      wait_for:
+        port: 8080
+        
+          
+    - name: Check if a reboot is required
+      register: file
+      stat: path=/var/run/reboot-required get_md5=no
+
+    - name: Reboot the server
+      shell: sleep 2 && /sbin/shutdown -r now "Tomcat installed"
+      async: 1
+      poll: 0
+      ignore_errors: true
+      notify:
+        - Wait for system.
+      when: file.stat.exists == true
 
