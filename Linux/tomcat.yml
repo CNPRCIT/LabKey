@@ -50,18 +50,18 @@
         home: /usr/share/tomcat
         create_home: no
 
-    - name: Download Tomcat
-      get_url:
-        url: http://apache.spinellicreations.com/tomcat/tomcat-8/v8.5.31/bin/apache-tomcat-8.5.31-fulldocs.tar.gz
-        dest: /opt/tomcat.tar.gz
+#    - name: Download Tomcat
+#      get_url:
+#        url: http://apache.spinellicreations.com/tomcat/tomcat-8/v8.5.31/bin/apache-tomcat-8.5.31-fulldocs.tar.gz
+#        dest: /opt/tomcat.tar.gz
 
     - name: Unarchive and set permissions
       unarchive:
         copy: yes
-        src: /opt/tomcat.tar.gz
+        src: http://apache.spinellicreations.com/tomcat/tomcat-8/v8.5.31/bin/apache-tomcat-8.5.31-fulldocs.tar.gz
         dest: /opt
-        owner: tomcat
-        group: tomcat
+        remote_src: yes
+
 
     - name: Check if a reboot is required
       register: file
