@@ -22,7 +22,7 @@
     
     - name: Pull CNPRC LabKey Build
       get_url:
-        url: "{{ lbky_aws_url }}""{{ lbky_cnprc_file }}"
+        url: "{{ lbky_aws_url }}{{ lbky_cnprc_file }}"
         dest: "{{ lbky_download_dir }}"
 
     - name: Reboot the server
