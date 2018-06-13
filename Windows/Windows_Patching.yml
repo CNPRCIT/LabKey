@@ -14,6 +14,8 @@
         category_names:
           - CriticalUpdates
           - SecurityUpdates
+          - UpdateRollups
+          - Updates
       register: update_count
       ignore_errors: yes
 
@@ -24,6 +26,8 @@
         category_names:
           - CriticalUpdates
           - SecurityUpdates
+          - UpdateRollups
+          - Updates
       register: update_result
 
     - name: Reboot if needed
