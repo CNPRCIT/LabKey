@@ -50,7 +50,7 @@
         home: /usr/share/tomcat
         create_home: no
 
-    - name: Download and Unarchive Apache Tomcat 8.5.31
+    - name: Download and Unarchive Apache Tomcat 8.5.9
       unarchive:
         src: https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.9/bin/apache-tomcat-8.5.9.tar.gz
         dest: /opt
