@@ -74,6 +74,16 @@
         mode: '+x'
         recurse: yes
 
+    - name: Define CATLINA home directory
+      lininfile:
+        path: ~/.bashrc
+        line: 'export CATALINA_HOME=/opt/tomcat'
+
+    - name: Source bashrc
+      shell: "{{ item }}"
+      with_items:
+        - source ~/.bashrc
+
     - name: Check if a reboot is required
       register: file
       stat: path=/var/run/reboot-required get_md5=no
