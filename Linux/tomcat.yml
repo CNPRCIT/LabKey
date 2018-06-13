@@ -55,11 +55,17 @@
         src: http://apache.spinellicreations.com/tomcat/tomcat-8/v8.5.31/bin/apache-tomcat-8.5.31-fulldocs.tar.gz
         dest: /opt
         remote_src: yes
-        owner: tomcat
-        group: tomcat
 
     - name: Move Extracted folder to Tomcat
       command: mv /opt/tomcat-8.5-doc /opt/tomcat
+
+    - name: Change Ownership of tomcat directory
+      file:
+        path: /opt/tomcat
+        state: directory
+        owner: tomcat
+        group: tomcat
+        recurse: yes
 
     - name: Check if a reboot is required
       register: file
