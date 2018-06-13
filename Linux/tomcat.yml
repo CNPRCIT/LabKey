@@ -76,7 +76,7 @@
 
     - name: Setup Tomcat Service
       blockinfile:
-        path: /etc/systemd/system/
+        path: /etc/systemd/system/tomcat.service
         create: yes
         block: |
           [Unit]
