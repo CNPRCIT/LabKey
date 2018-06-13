@@ -2,6 +2,11 @@
 - hosts: all
   become: true
   gather_facts: False
+  vars:
+    # defaults file for CNPRC LabKey Pull
+    lbky_download_dir: /tmp/lbky
+    lbky_aws_url: http://labkey.s3.amazonaws.com/downloads/cnprc/d/trunk/
+    lbky_cnprc_file: LabKey18.2-SNAPSHOT-58506.512-cnprc-bin.tar.gz
 
   handlers:
     - name: Wait for system.
