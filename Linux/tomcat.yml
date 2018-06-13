@@ -33,7 +33,7 @@
 
    - name: Install Oracle Java 8
      apt:
-       name: {{item}}
+       name: "{{ item }}"
        state: latest
        with_items:
          - oracle-java8-installer
