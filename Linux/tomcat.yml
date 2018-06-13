@@ -9,45 +9,61 @@
       become: False
 
   tasks:
-   - name: Updates a server
-     apt:
-       update_cache: yes
+    - name: Updates a server
+      apt:
+        update_cache: yes
 
-   - name: Install python software properties
-     apt: 
-       name: python-software-properties
-       state: latest
+    - name: Install python software properties
+      apt: 
+        name: python-software-properties
+        state: latest
 
-   - name: Add Oracle Java Repo
-     apt_repository: 
-       repo: 'ppa:webupd8team/java'
-       state: present
-       update_cache: yes
+    - name: Add Oracle Java Repo
+      apt_repository: 
+        repo: 'ppa:webupd8team/java'
+        state: present
+        update_cache: yes
 
-   - name: Accept Java 8 License
-     debconf:
-       name: 'oracle-java8-installer'
-       question: 'shared/accepted-oracle-license-v1-1'
-       value: 'true'
-       vtype: 'select'
+    - name: Accept Java 8 License
+      debconf:
+        name: 'oracle-java8-installer'
+        question: 'shared/accepted-oracle-license-v1-1'
+        value: 'true'
+        vtype: 'select'
 
-   - name: Install Oracle Java 8
-     apt: 
-       name: 
-       - oracle-java8-installer
-       - ca-certificates
-       - oracle-java8-set-default
-       state: latest
+    - name: Install Oracle Java 8
+      apt: 
+        name: 
+        - oracle-java8-installer
+        - ca-certificates
+        - oracle-java8-set-default
+        state: latest
 
-   - name: Check if a reboot is required
-     register: file
-     stat: path=/var/run/reboot-required get_md5=no
+    - name: Add Tomcat Group
+      group:
+        name: tomcat
 
-   - name: Reboot the server
-     shell: sleep 2 && /sbin/shutdown -r now "Ansible system package upgraded"
-     async: 1
-     poll: 0
-     ignore_errors: true
-     notify:
-       - Wait for system.
-     when: file.stat.exists == true
+    - name: Add tomcat user
+      user:
+        name: tomcat
+        group: tomcat
+        home: /usr/share/tomcat
+        create_home: no
+
+    - name: Download Tomcat
+      get_url:
+        url: http://apache.spinellicreations.com/tomcat/tomcat-8/v8.5.31/bin/apache-tomcat-8.5.31-fulldocs.tar.gz
+        dest: /opt/tomcat.tar.gz
+
+    - name: Check if a reboot is required
+      register: file
+      stat: path=/var/run/reboot-required get_md5=no
+
+    - name: Reboot the server
+      shell: sleep 2 && /sbin/shutdown -r now "Ansible system package upgraded"
+      async: 1
+      poll: 0
+      ignore_errors: true
+      notify:
+        - Wait for system.
+      when: file.stat.exists == true
