@@ -57,7 +57,6 @@
 
     - name: Unarchive and set permissions
       unarchive:
-        copy: yes
         src: http://apache.spinellicreations.com/tomcat/tomcat-8/v8.5.31/bin/apache-tomcat-8.5.31-fulldocs.tar.gz
         dest: /opt
         remote_src: yes
