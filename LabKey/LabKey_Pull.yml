@@ -12,6 +12,7 @@
     lbky_download_dir: /opt/lbky
     lbky_aws_url: http://labkey.s3.amazonaws.com/downloads/cnprc/d/trunk
     lbky_extract: "{{ '{{ lbky_cnprc_file }}' | regex_replace('.tar.gz') }}"
+    lbky_home: /usr/local/labkey
 
   handlers:
     - name: Wait for system.
@@ -19,6 +20,12 @@
       become: False
 
   tasks:
+    - name: Create LabKey home directory
+      file:
+        path: "{{ lbky_home }}"
+        state: directory
+        mode: 0755
+
     - name: Create download directory for LabKey pull
       file:
         path: "{{ lbky_download_dir }}"
@@ -30,12 +37,28 @@
         src: "{{ lbky_aws_url }}/{{ lbky_cnprc_file }}"
         dest: "{{ lbky_download_dir }}"
         remote_src: yes
-        register: lbky_archive
-        debug:
-          var: lbky_archive.stdout
 
-#    - name: Move LabKey JAR files to tomcat-home/lib folder
-#      command: mv /opt/apache-tomcat-8.5.9 /opt/tomcat
+    - name: Copy LabKey JAR files to tomcat-home/lib folder
+      copy:
+        src: "{{ lbky_download_dir }}/{{ lbky_extract }}/tomcat-lib/{{ item }}"
+        dest: /opt/tomcat/lib
+        owner: tomcat
+        group: tomcat
+      with_items:
+        - jtds.jar
+        - mail.jar
+        - mysql.jar
+        - postgresql.jar
+        - labkeyBootstrap.jar
+
+    - name: Copy LabKey directories to Labkey home
+      copy:
+        src: "{{ lbky_download_dir }}/{{ lbky_extract }}/{{ item }}"
+        dest: "{{ lbky_home }}"
+      with_items:
+        - labkeywebapp
+        - modules
+        - pipeline-lib
 
     - name: Reboot the server
       shell: sleep 2 && /sbin/shutdown -r now "Tomcat installed"
