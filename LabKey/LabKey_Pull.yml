@@ -1,1 +1,30 @@
+---
+- hosts: all
+  become: true
+  gather_facts: False
 
+  handlers:
+    - name: Wait for system.
+      local_action: wait_for host={{ ansible_ssh_host }} port=22 state=started delay=30 timeout=60
+      become: False
+
+  tasks:
+    - name: Create download directory for LabKey pull
+      file:
+        path: "{{ lbky_download_dir }}"
+        state: directory
+        mode: 0755
+    
+    - name: Pull CNPRC LabKey Build
+      get_url:
+        url: "{{ lbky_aws_url }}""{{ lbky_cnprc_file }}"
+        dest: "{{ lbky_download_dir }}"
+
+    - name: Reboot the server
+      shell: sleep 2 && /sbin/shutdown -r now "Tomcat installed"
+      async: 1
+      poll: 0
+      ignore_errors: true
+      notify:
+        - Wait for system.
+      when: file.stat.exists == true
