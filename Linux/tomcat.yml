@@ -52,12 +52,12 @@
 
     - name: Download and Unarchive Apache Tomcat 8.5.31
       unarchive:
-        src: http://apache.spinellicreations.com/tomcat/tomcat-8/v8.5.31/bin/apache-tomcat-8.5.31.tar.gz
+        src: https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.9/bin/apache-tomcat-8.5.9.tar.gz
         dest: /opt
         remote_src: yes
 
     - name: Move Extracted folder to Tomcat
-      command: mv /opt/apache-tomcat-8.5.31 /opt/tomcat
+      command: mv /opt/apache-tomcat-8.5.9 /opt/tomcat
 
     - name: Change Ownership of Tomcat directory
       file:
@@ -97,14 +97,15 @@
           [Install]
           WantedBy=multi-user.target
 
-    - name: System Daemon Reload
-      shell: systemctl daemon-reload
+#    - name: System Daemon Reload
+#      shell: systemctl daemon-reload
 
-    - name: Start Tomcat and enable for boot
-      service: 
+    - name: Start and enable Tomcat Service
+      systemd:
         name: tomcat
         state: started
         enabled: yes
+        daemon_reload: yes
 
     - name: Wait for Tomcat to start
       wait_for:
