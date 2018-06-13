@@ -18,19 +18,23 @@
        name: python-software-properties
        state: present
 
-   - name: Install Oracle Java Repo
+   - name: Add Oracle Java Repo
      apt_repository: 
        repo: ppa:webupd8team/java
        state: present
-
-   - name: Update with Oracle PPA
-     apt:
        update_cache: yes
 
-   - name: Install Oracle Java 8
-     apt: 
+   - name: Accept Oracle License
+     debconf:
        name: oracle-java8-installer
-       state: present
+       question: shared/accepted-oracle-license-v1-1
+       value: true
+       vtype: select
+
+   - name: Install Oracle Java 8
+     apt:
+       name: oracle-java8-installer
+       state: latest
 
    - name: Check if a reboot is required
      register: file
