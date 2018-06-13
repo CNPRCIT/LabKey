@@ -74,22 +74,49 @@
         mode: '+x'
         recurse: yes
 
-    - name: Define CATLINA home directory
-      lineinfile:
-        path: ~/.bashrc
-        line: 'export CATALINA_HOME=/opt/tomcat'
+    - name: Setup Tomcat Service
+      blockinfile:
+        path: /etc/systemd/system/
+        create: yes
+        block: |
+          [Unit]
+          Description=Apache Tomcat 8
+          After=syslog.target network.target
 
-    - name: Source bashrc
-      shell: "{{ item }}"
-      with_items:
-        - source ~/.bashrc
+          [Service]
+          User=tomcat
+          Group=tomcat
+          Type=forking
+          Environment=CATALINA_PID=/opt/tomcat/tomcat.pid
+          Environment=CATALINA_HOME=/opt/tomcat
+          Environment=CATALINA_BASE=/opt/tomcat
+          ExecStart=/opt/tomcat/bin/startup.sh
+          ExecStop=/opt/tomcat/bin/shutdown.sh
+          Restart=on-failure
 
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: System Daemon Reload
+      shell: systemctl daemon-reload
+
+    - name: Start Tomcat and enable for boot
+      service: 
+        name: tomcat
+        state: started
+        enabled: yes
+
+    - name: Wait for Tomcat to start
+      wait_for:
+        port: 8080
+        
+          
     - name: Check if a reboot is required
       register: file
       stat: path=/var/run/reboot-required get_md5=no
 
     - name: Reboot the server
-      shell: sleep 2 && /sbin/shutdown -r now "Ansible system package upgraded"
+      shell: sleep 2 && /sbin/shutdown -r now "Tomcat installed"
       async: 1
       poll: 0
       ignore_errors: true
