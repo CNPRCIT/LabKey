@@ -32,7 +32,7 @@
         remote_src: yes
         register: lbky_archive
         debug:
-          msg: "{{ lbky_archive.stdout }}"
+          var: lbky_archive.stdout
 
 #    - name: Move LabKey JAR files to tomcat-home/lib folder
 #      command: mv /opt/apache-tomcat-8.5.9 /opt/tomcat
