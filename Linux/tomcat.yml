@@ -50,16 +50,13 @@
         home: /usr/share/tomcat
         create_home: no
 
-#    - name: Download Tomcat
-#      get_url:
-#        url: http://apache.spinellicreations.com/tomcat/tomcat-8/v8.5.31/bin/apache-tomcat-8.5.31-fulldocs.tar.gz
-#        dest: /opt/tomcat.tar.gz
-
     - name: Download and Unarchive
       unarchive:
         src: http://apache.spinellicreations.com/tomcat/tomcat-8/v8.5.31/bin/apache-tomcat-8.5.31-fulldocs.tar.gz
         dest: /opt
         remote_src: yes
+        owner: tomcat
+        group: tomcat
 
     - name: Move Extracted folder to Tomcat
       command: mv /opt/tomcat-8.5-doc /opt/tomcat
