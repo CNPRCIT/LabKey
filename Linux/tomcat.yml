@@ -43,14 +43,14 @@
       group:
         name: tomcat
 
-    - name: Add tomcat user
+    - name: Add Tomcat User
       user:
         name: tomcat
         group: tomcat
         home: /usr/share/tomcat
         create_home: no
 
-    - name: Download and Unarchive
+    - name: Download and Unarchive Apache Tomcat 8.5.31
       unarchive:
         src: http://apache.spinellicreations.com/tomcat/tomcat-8/v8.5.31/bin/apache-tomcat-8.5.31.tar.gz
         dest: /opt
@@ -59,7 +59,7 @@
     - name: Move Extracted folder to Tomcat
       command: mv /opt/apache-tomcat-8.5.31 /opt/tomcat
 
-    - name: Change Ownership of tomcat directory
+    - name: Change Ownership of Tomcat directory
       file:
         path: /opt/tomcat
         state: directory
@@ -67,7 +67,7 @@
         group: tomcat
         recurse: yes
 
-    - name: Change bin files to executable
+    - name: Change tomcat bin files to executable
       file:
         path: /opt/tomcat/bin
         state: directory
