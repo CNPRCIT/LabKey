@@ -75,7 +75,7 @@
         recurse: yes
 
     - name: Define CATLINA home directory
-      lininfile:
+      lineinfile:
         path: ~/.bashrc
         line: 'export CATALINA_HOME=/opt/tomcat'
 
