@@ -65,7 +65,7 @@
 
     - name: Replace strings in LabKey Server config XML
       lineinfile:
-        path: "{{ lbky_extract }}/labkey.xml"
+        path: "{{ lbky_download_dir }}/{{ lbky_extract }}/labkey.xml"
         regexp: '^\@\@appDocBase\@\@'
         line: "{{ lbky_home }}/labkeywebapp"
         
