@@ -64,6 +64,17 @@
         - pipeline-lib
       delegate_to: "{{ inventory_hostname }}"
 
+# synchronize does not allow setting of permissions.
+    - name: Set directory permissions to Labkey home for tomcat
+      file:
+        path: "{{ lbky_home }}/{{ item }}"
+        owner: tomcat
+        group: tomcat
+      with_items:
+        - labkeywebapp
+        - modules
+      
+
     - name: Replace LabKey Home string in LabKey Server config XML
       replace:
         path: "{{ lbky_download_dir }}/{{ lbky_extract }}/labkey.xml"
