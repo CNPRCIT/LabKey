@@ -62,7 +62,7 @@
         - labkeywebapp
         - modules
         - pipeline-lib
-      delegate_to: 192.168.38.9
+      delegate_to: "{{ inventory_hostname }}"
 
     - name: Reboot the server
       shell: sleep 2 && /sbin/shutdown -r now "Tomcat installed"
