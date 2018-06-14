@@ -68,7 +68,14 @@
         path: "{{ lbky_download_dir }}/{{ lbky_extract }}/labkey.xml"
         regexp: '@@appDocBase@@'
         replace: "{{ lbky_home }}/labkeywebapp"
+
+
+
+  
         
+    - name: Check if a reboot is required
+      register: file
+      stat: path=/var/run/reboot-required get_md5=no
 
     - name: Reboot the server
       shell: sleep 2 && /sbin/shutdown -r now "Tomcat installed"
