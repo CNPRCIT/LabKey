@@ -80,19 +80,15 @@
       with_items:
         - labkey.xml
 
+   - name: Check if a reboot is required
+     register: file
+     stat: path=/var/run/reboot-required get_md5=no
 
-
-
-
-    - name: Check if a reboot is required
-      register: file
-      stat: path=/var/run/reboot-required get_md5=no
-
-    - name: Reboot the server
-      shell: sleep 2 && /sbin/shutdown -r now "Tomcat installed"
-      async: 1
-      poll: 0
-      ignore_errors: true
-      notify:
-        - Wait for system.
-      when: file.stat.exists == true
+   - name: Reboot the server
+     shell: sleep 2 && /sbin/shutdown -r now
+     async: 1
+     poll: 0
+     ignore_errors: true
+     notify:
+       - Wait for system.
+     when: file.stat.exists == true
