@@ -53,6 +53,7 @@
         - postgresql.jar
         - labkeyBootstrap.jar
 
+## ansible copy does not do directories recursively, used synchronize (rsync)
     - name: Copy LabKey directories to Labkey home
       synchronize:
         src: "{{ lbky_download_dir }}/{{ lbky_extract }}/{{ item }}"
@@ -63,16 +64,26 @@
         - pipeline-lib
       delegate_to: "{{ inventory_hostname }}"
 
-    - name: Replace strings in LabKey Server config XML
+    - name: Replace LabKey Home string in LabKey Server config XML
       replace:
         path: "{{ lbky_download_dir }}/{{ lbky_extract }}/labkey.xml"
         regexp: '@@appDocBase@@'
         replace: "{{ lbky_home }}/labkeywebapp"
 
+    - name: Copy LabKey XML to tomcat/Catalina/localhost
+      copy:
+        src: "{{ lbky_download_dir }}/{{ lbky_extract }}/{{ item }}"
+        dest: "{{ tomcat_home }}/conf/Catalina/localhost
+        owner: tomcat
+        group: tomcat
+        remote_src: yes
+      with_items:
+        - labkey.xml
 
 
-  
-        
+
+
+
     - name: Check if a reboot is required
       register: file
       stat: path=/var/run/reboot-required get_md5=no
