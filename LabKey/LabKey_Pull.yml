@@ -73,22 +73,22 @@
     - name: Copy LabKey XML to tomcat/Catalina/localhost
       copy:
         src: "{{ lbky_download_dir }}/{{ lbky_extract }}/{{ item }}"
-        dest: "{{ tomcat_home }}/conf/Catalina/localhost
+        dest: "{{ tomcat_home }}/conf/Catalina/localhost"
         owner: tomcat
         group: tomcat
         remote_src: yes
       with_items:
         - labkey.xml
 
-   - name: Check if a reboot is required
-     register: file
-     stat: path=/var/run/reboot-required get_md5=no
+    - name: Check if a reboot is required
+      register: file
+      stat: path=/var/run/reboot-required get_md5=no
 
-   - name: Reboot the server
-     shell: sleep 2 && /sbin/shutdown -r now
-     async: 1
-     poll: 0
-     ignore_errors: true
-     notify:
-       - Wait for system.
-     when: file.stat.exists == true
+    - name: Reboot the server
+      shell: sleep 2 && /sbin/shutdown -r now
+      async: 1
+      poll: 0
+      ignore_errors: true
+      notify:
+        - Wait for system.
+      when: file.stat.exists == true
