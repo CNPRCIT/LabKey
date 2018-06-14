@@ -64,10 +64,10 @@
       delegate_to: "{{ inventory_hostname }}"
 
     - name: Replace strings in LabKey Server config XML
-      lineinfile:
+      replace:
         path: "{{ lbky_download_dir }}/{{ lbky_extract }}/labkey.xml"
-        regexp: '^\@\@appDocBase\@\@'
-        line: "{{ lbky_home }}/labkeywebapp"
+        regexp: '@@appDocBase@@'
+        replace: "{{ lbky_home }}/labkeywebapp"
         
 
     - name: Reboot the server
