@@ -53,11 +53,9 @@
         - labkeyBootstrap.jar
 
     - name: Copy LabKey directories to Labkey home
-#      copy:
       synchronize:
         src: "{{ lbky_download_dir }}/{{ lbky_extract }}/{{ item }}"
         dest: "{{ lbky_home }}"
-#        remote_src: yes
       with_items:
         - labkeywebapp
         - modules
