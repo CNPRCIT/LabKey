@@ -13,6 +13,7 @@
     lbky_aws_url: http://labkey.s3.amazonaws.com/downloads/cnprc/d/trunk
     lbky_extract: "{{ lbky_cnprc_file | regex_replace('.tar.gz') }}"
     lbky_home: /usr/local/labkey
+    tomcat_home: /opt/tomcat
 
   handlers:
     - name: Wait for system.
@@ -41,7 +42,7 @@
     - name: Copy LabKey JAR files to tomcat-home/lib folder
       copy:
         src: "{{ lbky_download_dir }}/{{ lbky_extract }}/tomcat-lib/{{ item }}"
-        dest: /opt/tomcat/lib/
+        dest: "{{ tomcat_home }}/lib/"
         owner: tomcat
         group: tomcat
         remote_src: yes
@@ -61,6 +62,13 @@
         - modules
         - pipeline-lib
       delegate_to: "{{ inventory_hostname }}"
+
+    - name: Replace strings in LabKey Server config XML
+      lineinfile:
+        path: "{{ lbky_extract }}/labkey.xml"
+        regexp: '^\@\@appDocBase\@\@'
+        line: "{{ lbky_home }}/labkeywebapp"
+        
 
     - name: Reboot the server
       shell: sleep 2 && /sbin/shutdown -r now "Tomcat installed"
