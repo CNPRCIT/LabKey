@@ -58,11 +58,11 @@
         src: "{{ lbky_download_dir }}/{{ lbky_extract }}/{{ item }}"
         dest: "{{ lbky_home }}"
 #        remote_src: yes
-      delegate_to: delegate.host
       with_items:
         - labkeywebapp
         - modules
         - pipeline-lib
+      delegate_to: 192.168.38.9
 
     - name: Reboot the server
       shell: sleep 2 && /sbin/shutdown -r now "Tomcat installed"
