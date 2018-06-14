@@ -42,8 +42,9 @@
       copy:
         src: "{{ lbky_download_dir }}/{{ lbky_extract }}/tomcat-lib/{{ item }}"
         dest: /opt/tomcat/lib/
- #       owner: tomcat
-  #      group: tomcat
+        owner: tomcat
+        group: tomcat
+        remote_src: yes
       with_items:
         - jtds.jar
         - mail.jar
