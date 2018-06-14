@@ -41,9 +41,9 @@
     - name: Copy LabKey JAR files to tomcat-home/lib folder
       copy:
         src: "{{ lbky_download_dir }}/{{ lbky_extract }}/tomcat-lib/{{ item }}"
-        dest: /opt/tomcat/lib
-        owner: tomcat
-        group: tomcat
+        dest: /opt/tomcat/lib/
+ #       owner: tomcat
+  #      group: tomcat
       with_items:
         - jtds.jar
         - mail.jar
