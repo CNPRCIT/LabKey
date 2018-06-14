@@ -33,11 +33,11 @@
         state: directory
         mode: 0755
 
-#    - name: Download and Unarchive LabKey
-#      unarchive:
-#        src: "{{ lbky_aws_url }}/{{ lbky_cnprc_file }}"
-#        dest: "{{ lbky_download_dir }}"
-#        remote_src: yes
+    - name: Download and Unarchive LabKey
+      unarchive:
+        src: "{{ lbky_aws_url }}/{{ lbky_cnprc_file }}"
+        dest: "{{ lbky_download_dir }}"
+        remote_src: yes
 
     - name: Copy LabKey JAR files to tomcat-home/lib folder
       copy:
