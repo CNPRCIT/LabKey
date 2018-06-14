@@ -11,7 +11,7 @@
     ##
     lbky_download_dir: /opt/lbky
     lbky_aws_url: http://labkey.s3.amazonaws.com/downloads/cnprc/d/trunk
-    lbky_extract: "{{ '{{ lbky_cnprc_file }}' | regex_replace('.tar.gz') }}"
+    lbky_extract: {{ lbky_cnprc_file | regex_replace('.tar.gz') }}
     lbky_home: /usr/local/labkey
 
   handlers:
