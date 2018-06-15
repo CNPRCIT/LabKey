@@ -2,6 +2,8 @@
 - hosts: all
   become: true
   gather_facts: False
+  vars_files:
+    - '/home/cnprc/lbky.yml'
 
   handlers:
     - name: Wait for system.
@@ -96,9 +98,6 @@
 
           [Install]
           WantedBy=multi-user.target
-
-#    - name: System Daemon Reload
-#      shell: systemctl daemon-reload
 
     - name: Start and enable Tomcat Service
       systemd:
