@@ -1,0 +1,112 @@
+---
+- hosts: all
+  become: true
+  gather_facts: False
+  vars:
+    # The URL of the repo to fetch the mssql-server and mssql-server-ha packages from
+    ubuntu_server_repo_url: 'https://packages.microsoft.com/config/ubuntu/16.04/mssql-server-2017.list'
+
+    # The URL of the repo to fetch the mssql-tools package from
+    ubuntu_tools_repo_url: 'https://packages.microsoft.com/config/ubuntu/16.04/prod.list'
+
+    # The sqlservr PID. Only used if mssql-server needs to be installed.
+    # PID Types
+    # Evaluation (free, no production use rights, 180-day limit)
+    # Developer (free, no production use rights)
+    # Express (free)
+    # Web (PAID)
+    # Standard (PAID)
+    # Enterprise (PAID)
+    # Enterprise Core (PAID)
+    pid: 'Developer'
+
+    # The port for the TSQL endpoint
+    tsql_endpoint_port: 1433
+
+    # The name of the DBM endpoint
+    dbm_endpoint_name: 'dbm_endpoint'
+
+    # The port for the DBM endpoint
+    dbm_endpoint_port: 5022
+
+    # The SQL login and SQL username for the DBM endpoint user
+    dbm_login: 'dbm_login'
+    dbm_username: 'dbm_user'
+
+    # The name of the DBM cert
+    dbm_cert_name: 'dbm_cert'
+
+    # The password for the sa user. Only used if mssql-server needs to be installed.
+    sa_password: 'password'
+
+# install mssql-server package
+
+- name: install mssql-server repo (Ubuntu)
+  get_url:
+    url: "{{ ubuntu_server_repo_url }}"
+    dest: /etc/apt/sources.list.d/mssql-server.list
+
+- name: refresh apt-get cache for server repo
+  apt:
+    update_cache: yes
+
+- name: install mssql-server package
+  package:
+    name: mssql-server
+    state: latest
+
+
+# setup
+
+- name: mssql-server setup
+  mssql_conf:
+    setup_sa_password: "{{ sa_password }}"
+    setup_pid: "{{ pid }}"
+    login_name: 'sa'
+    login_password: "{{ sa_password }}"
+
+
+# TSQL endpoint
+
+- name: set TSQL endpoint port
+  mssql_conf:
+    name: network.tcpport
+    value: "{{ tsql_endpoint_port }}"
+    login_name: 'sa'
+    login_password: "{{ sa_password }}"
+
+
+- name: open TSQL endpoint in firewall (Ubuntu)
+  ufw:
+    port: "{{ tsql_endpoint_port }}"
+    proto: tcp
+    rule: allow
+  when: ansible_distribution == 'Ubuntu'
+
+
+# mssql-tools package
+
+- name: install mssql-tools repo (Ubuntu)
+  get_url:
+    url: "{{ ubuntu_tools_repo_url }}"
+    dest: /etc/apt/sources.list.d/mssql-tools.list
+  when: ansible_distribution == 'Ubuntu'
+
+- name: refresh apt-get cache for tools repo (Ubuntu)
+  command: apt-get update
+  when: ansible_distribution == 'Ubuntu'
+
+- name: install mssql-tools package
+  package:
+    name: mssql-tools
+    state: latest
+  environment:
+    ACCEPT_EULA: 'y'
+
+
+# Start mssql-server service
+
+- name: start sqlservr
+  service:
+    name: mssql-server
+    state: started
