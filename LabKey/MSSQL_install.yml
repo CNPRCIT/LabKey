@@ -29,7 +29,7 @@
     dbm_username: 'dbm_user' 
 
     # SA password 
-    sa_password: 'password'
+    sa_password: 'pRim@tep00p'
 
   handlers:
     - name: Wait for system.
@@ -96,6 +96,11 @@
         state: latest
       environment:
         ACCEPT_EULA: 'y'
+
+    - name: Install UNIXODBC package
+      apt:
+        name: unixodbc-dev
+        state: latest
 
 # Start MSSQL service
 
