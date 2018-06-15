@@ -10,10 +10,11 @@
     ##
     ##
     lbky_download_dir: /opt/lbky
-    lbky_aws_url: http://labkey.s3.amazonaws.com/downloads/cnprc/d/trunk
-    lbky_extract: "{{ lbky_cnprc_file | regex_replace('.tar.gz') }}"
-    lbky_home: /usr/local/labkey
-    tomcat_home: /opt/tomcat
+
+#    lbky_aws_url: http://labkey.s3.amazonaws.com/downloads/cnprc/d/trunk
+#    lbky_extract: "{{ lbky_cnprc_file | regex_replace('.tar.gz') }}"
+#    lbky_home: /usr/local/labkey
+#    tomcat_home: /opt/tomcat
 
   handlers:
     - name: Wait for system.
@@ -21,6 +22,10 @@
       become: False
 
   tasks:
+#   Get variables from vault encrypted file.
+    - name: Get variables
+      include_vars: /home/cnprc/lbky.yml
+
     - name: Create LabKey home directory
       file:
         path: "{{ lbky_home }}"
