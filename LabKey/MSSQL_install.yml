@@ -40,9 +40,8 @@
     sa_password: 'password'
 
 # install mssql-server package
-
   tasks:
-    - name: install mssql-server repo (Ubuntu)
+    - name: install mssql-server repo
       get_url:
         url: "{{ ubuntu_server_repo_url }}"
         dest: /etc/apt/sources.list.d/mssql-server.list
