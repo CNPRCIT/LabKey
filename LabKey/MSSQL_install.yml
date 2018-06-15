@@ -30,10 +30,15 @@
 
     # SA password 
     sa_password: 'password'
-    
+
+  handlers:
+    - name: Wait for system.
+      local_action: wait_for host={{ ansible_ssh_host }} port=22 state=started delay=30 timeout=60
+      become: False
+
   tasks:
   # install mssql-server package
-    - name: install mssql-server repo
+    - name: SQL setup
       get_url:
         url: "{{ ubuntu_server_repo_url }}"
         dest: /etc/apt/sources.list.d/mssql-server.list
@@ -94,3 +99,16 @@
       service:
         name: mssql-server
         state: started
+
+    - name: Check if a reboot is required
+      register: file
+      stat: path=/var/run/reboot-required get_md5=no
+
+    - name: Reboot the server
+      shell: sleep 2 && /sbin/shutdown -r now "Tomcat installed"
+      async: 1
+      poll: 0
+      ignore_errors: true
+      notify:
+        - Wait for system.
+      when: file.stat.exists == true
