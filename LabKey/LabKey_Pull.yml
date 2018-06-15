@@ -25,7 +25,7 @@
 #   Get variables from vault encrypted file.
     - name: Get variables
       vars_files:
-        - /home/cnprc/lbky.yml
+        - '/home/cnprc/lbky.yml'
 
     - name: Create LabKey home directory
       file:
