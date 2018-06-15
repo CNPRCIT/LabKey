@@ -10,6 +10,8 @@
     ##
     ##
     lbky_download_dir: /opt/lbky
+  vars_files:
+    - '/home/cnprc/lbky.yml'
 
 #    lbky_aws_url: http://labkey.s3.amazonaws.com/downloads/cnprc/d/trunk
 #    lbky_extract: "{{ lbky_cnprc_file | regex_replace('.tar.gz') }}"
@@ -23,9 +25,8 @@
 
   tasks:
 #   Get variables from vault encrypted file.
-    - name: Get variables
-      vars_files:
-        - '/home/cnprc/lbky.yml'
+#    - name: Get variables
+#      include_vars: /home/cnprc/lbky.yml
 
     - name: Create LabKey home directory
       file:
