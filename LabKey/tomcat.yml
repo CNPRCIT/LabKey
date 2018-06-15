@@ -99,6 +99,32 @@
           [Install]
           WantedBy=multi-user.target
 
+    - name: Enable and configure tomcat users
+      blockinfile:
+        path: /opt/tomcat/conf/tomcat-users.xml
+        block: |
+          <role rolename="manager-gui/"/>
+          <user username="{{ tomcat_mgr_uname }}" password="{{ tomcat_mgr_pword }}" roles="manager-gui,admin-gui"/>
+        insertbefore: "</tomcat-users>"
+
+    - name: Comment META-INF in manager
+      lineinfile:
+        path: /opt/tomcat/webapps/manager/META-INF/context.xml
+        insertbefore: "{{ item.before }}"
+        line: "{{ item.line }}"
+      with_items:
+        - { before: '\<Valve className\=\"org.apache.catalina.valves.RemoteAddrValve\"', line: '<!--' }
+        - { before: '</Context>', line: '-->' }
+   
+    - name: Comment META-INF in host-manager
+      lineinfile:
+        path: /opt/tomcat/webapps/host-manager/META-INF/context.xml
+        insertbefore: "{{ item.before }}"
+        line: "{{ item.line }}"
+      with_items:
+        - { before: '\<Valve className\=\"org.apache.catalina.valves.RemoteAddrValve\"', line: '<!--' }
+        - { before: '</Context>', line: '-->' }
+
     - name: Start and enable Tomcat Service
       systemd:
         name: tomcat
