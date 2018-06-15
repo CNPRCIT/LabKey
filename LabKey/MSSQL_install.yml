@@ -37,23 +37,27 @@
       become: False
 
   tasks:
-  # install mssql-server package
-    - name: SQL setup
+  # Install MSSQL package
+    - name: Import MS GPG Key
+      apt_key:
+        url: https://packages.microsoft.com/keys/microsoft.asc
+        state: present
+
+    - name: Register MSSQL Repo
       get_url:
         url: "{{ ubuntu_server_repo_url }}"
         dest: /etc/apt/sources.list.d/mssql-server.list
 
-    - name: refresh apt-get cache for server repo
+    - name: Refresh apt-get cache for MSSQL Server repo
       apt:
         update_cache: yes
 
-    - name: install mssql-server package
+    - name: Install MSSQL
       package:
         name: mssql-server
       state: latest
-
-# setup
-    - name: mssql-server setup
+    
+    - name: MSSQL Server setup
       mssql_conf:
        setup_sa_password: "{{ sa_password }}"
        setup_pid: "{{ pid }}"
@@ -77,25 +81,25 @@
 
 # mssql-tools package
 
-    - name: install mssql-tools repo (Ubuntu)
+    - name: Install MSSQL tool repo
       get_url:
         url: "{{ ubuntu_tools_repo_url }}"
         dest: /etc/apt/sources.list.d/mssql-tools.list
 
-    - name: refresh apt-get cache for server repo
+    - name: Refresh apt-get cache for MSSQL tools repo
       apt:
         update_cache: yes
 
-    - name: install mssql-tools package
+    - name: Install MSSQL tools package
       apt:
         name: mssql-tools
         state: latest
       environment:
-      ACCEPT_EULA: 'y'
+        ACCEPT_EULA: 'y'
 
-# Start mssql-server service
+# Start MSSQL service
 
-    - name: start sqlservr
+    - name: Start MSSQL
       service:
         name: mssql-server
         state: started
