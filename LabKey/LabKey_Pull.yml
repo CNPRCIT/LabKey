@@ -24,7 +24,8 @@
   tasks:
 #   Get variables from vault encrypted file.
     - name: Get variables
-      include_vars: /home/cnprc/lbky.yml
+      vars_files:
+        - /home/cnprc/lbky.yml
 
     - name: Create LabKey home directory
       file:
