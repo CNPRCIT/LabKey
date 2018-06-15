@@ -3,7 +3,7 @@
   become: true
   gather_facts: False
   vars:
-
+  
   tasks:
   # install mssql-server package
     - name: install mssql-server repo
