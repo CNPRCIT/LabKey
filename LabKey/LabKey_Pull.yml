@@ -70,14 +70,9 @@
     - name: Set directory permissions to Labkey home for tomcat
       file:
         path: "{{ lbky_home }}"
-#        path: "{{ lbky_home }}/{{ item }}"
         owner: tomcat
         group: root
         recurse: yes
-#        group: tomcat
-#      with_items:
-#        - labkeywebapp
-#        - modules
       
 
     - name: Replace LabKey Home string in LabKey Server config XML
