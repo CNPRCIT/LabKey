@@ -80,7 +80,7 @@
         create: yes
         block: |
           [Unit]
-          Description=Apache Tomcat 8
+          Description=Apache Tomcat 8 Servlet Container
           After=syslog.target network.target
 
           [Service]

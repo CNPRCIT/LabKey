@@ -25,6 +25,8 @@
       file:
         path: "{{ lbky_home }}"
         state: directory
+        owner: tomcat
+        group: root
         mode: 0755
 
     - name: Create download directory for LabKey pull
@@ -90,6 +92,12 @@
         remote_src: yes
       with_items:
         - labkey.xml
+
+    - name: Reload and pick up config changes for Tomcat Service
+      systemd:
+        name: tomcat
+        state: restarted
+        daemon_reload: yes
 
     - name: Check if a reboot is required
       register: file
