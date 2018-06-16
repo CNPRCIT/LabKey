@@ -5,31 +5,9 @@
   vars:
     ubuntu_server_repo_url: 'https://packages.microsoft.com/config/ubuntu/16.04/mssql-server-2017.list'
     ubuntu_tools_repo_url: 'https://packages.microsoft.com/config/ubuntu/16.04/prod.list'
-    # PID Types
-    # Evaluation
-    # Developer
-    # Express
-    # Web
-    # Standard
-    # Enterprise
-    # Enterprise Core
-    pid: 'Developer'
+  vars_files:
+    - '/home/cnprc/lbky.yml'
 
-    # The port for the TSQL endpoint
-    tsql_endpoint_port: 1433
-
-    # The name of the DBM endpoint 
-    dbm_endpoint_name: 'dbm_endpoint'
-
-    # the port for the DBM endpoint 
-    dbm_endpoint_port: 5022
-
-    # The SQL login and SQL username for the DBM endpoint 
-    dbm_login: 'dbm_login'
-    dbm_username: 'dbm_user' 
-
-    # SA password 
-    sa_password: 'pRim@tep00p'
 
   handlers:
     - name: Wait for system.
