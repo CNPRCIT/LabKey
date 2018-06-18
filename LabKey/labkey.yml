@@ -1,5 +1,4 @@
 ---
-# file: webservers.yml
 - hosts: webserver
   roles:
     - common
