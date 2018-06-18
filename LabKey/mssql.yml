@@ -1,1 +1,5 @@
 ---
+- hosts: mssql
+  roles:
+    - common
+    - mssql
