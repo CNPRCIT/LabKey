@@ -1,6 +1,7 @@
 ---
 # file: webservers.yml
-- hosts: webservers
+- hosts: webserver
   roles:
     - common
-    - web
+    - tomcat
+    - labkey
