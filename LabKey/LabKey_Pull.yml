@@ -75,25 +75,31 @@
         recurse: yes
       
 
-    - name: Replace default strings in LabKey Server config XML
-      replace:
-        path: "{{ lbky_download_dir }}/{{ lbky_extract }}/labkey.xml"
-        regexp: "{{ item.regexp }}"
-        replace: "{{ item.replace }}"
-      with_items:
-        - { regexp: '@@appDocBase@@', replace: '{{ lbky_home }}/labkeywebapp' }
-        - { regexp: '@@jdbcUser@@', replace: '{{ jdbcUser }}' }
-        - { regexp: '@@jdbcPassword@@', replace: '{{ jdbcPass }}'}
+#    - name: Replace default strings in LabKey Server config XML
+#      replace:
+#        path: "{{ lbky_download_dir }}/{{ lbky_extract }}/labkey.xml"
+#        regexp: "{{ item.regexp }}"
+#        replace: "{{ item.replace }}"
+#      with_items:
+#        - { regexp: '@@appDocBase@@', replace: '{{ lbky_home }}/labkeywebapp' }
+#       - { regexp: '@@jdbcUser@@', replace: '{{ jdbcUser }}' }
+#        - { regexp: '@@jdbcPassword@@', replace: '{{ jdbcPass }}' }
+#        - { regexp: 'org.postgresql.Driver', replace: 'net.sourceforge.jtds.jdbc.Driver' }
+#        - { regexp: 'jdbc:postgresql://localhost/labkey', replace: '{{ jdbc_url }}' }
+#        - { regexp: '@@smtpHost@@', replace: '{{ smtp_host }}' }
+#        - { regexp: '@@smtpUser@@', replace: '{{ smtp_user }}'}
+
 
     - name: Copy LabKey XML to tomcat/Catalina/localhost
       copy:
-        src: "{{ lbky_download_dir }}/{{ lbky_extract }}/{{ item }}"
+#        src: "{{ lbky_download_dir }}/{{ lbky_extract }}/{{ item }}"
+        src: '/home/cnprc/labkey.xml'
         dest: "{{ tomcat_home }}/conf/Catalina/localhost"
         owner: tomcat
         group: tomcat
-        remote_src: yes
-      with_items:
-        - labkey.xml
+#        remote_src: yes
+#      with_items:
+#        - labkey.xml
 
     - name: Reload and pick up config changes for Tomcat Service
       systemd:
