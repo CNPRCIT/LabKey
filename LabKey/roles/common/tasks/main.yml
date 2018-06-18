@@ -3,11 +3,6 @@
   become: true
   gather_facts: False
 
-  handlers:
-    - name: Wait for system.
-      local_action: wait_for host={{ ansible_ssh_host }} port=22 state=started delay=30 timeout=60
-      become: False
-
   tasks:
    - name: Install Python 2.x
      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-simplejson)
