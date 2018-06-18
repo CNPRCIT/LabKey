@@ -1,14 +1,4 @@
 ---
-- hosts: all
-  become: true
-  gather_facts: false
-  vars:
-    ubuntu_server_repo_url: 'https://packages.microsoft.com/config/ubuntu/16.04/mssql-server-2017.list'
-    ubuntu_tools_repo_url: 'https://packages.microsoft.com/config/ubuntu/16.04/prod.list'
-  vars_files:
-    - '/home/cnprc/lbky.yml'
-
-
   handlers:
     - name: Wait for system.
       local_action: wait_for host={{ ansible_ssh_host }} port=22 state=started delay=30 timeout=60
