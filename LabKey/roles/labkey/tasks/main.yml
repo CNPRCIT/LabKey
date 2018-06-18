@@ -1,8 +1,4 @@
 ---
-  vars_files:
-    - '/home/cnprc/lbky.yml'
-
-  tasks:
     - name: Create LabKey home directory
       file:
         path: "{{ lbky_home }}"
