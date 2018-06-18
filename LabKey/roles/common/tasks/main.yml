@@ -1,9 +1,4 @@
 ---
-- hosts: all
-  become: true
-  gather_facts: False
-
-  tasks:
    - name: Install Python 2.x
      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-simplejson)
      register: test
