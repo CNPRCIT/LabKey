@@ -8,7 +8,7 @@ Ansible to install LabKey.
 * mssql - This role installs mssql on Ubuntu and creates a DB for use with Labkey
 * tomcat - This role installs Oracle Java and Tomcat.
 
-##Vault File
+## Vault File
 A vault file is used for sensitive data:
 * '<lbky_aws_url>' - LabKey URL download for your organization.
 * '<lbky_home>' - LabKey home on the server.
