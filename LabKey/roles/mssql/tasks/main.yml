@@ -70,7 +70,22 @@
   service:
     name: mssql-server
     state: started
-        
+
+# Install pymssql to create DB remotely.
+- name: Install pymssql
+  pip:
+    name: pymssql
+
+# Create LabKey DB
+- name: Create DB for LabKey
+  mssql_db:
+    login_host: "{{ db_server }}"
+    login_user: "{{ jdbcUser }}"
+    login_password: "{{ jdbcPass }}"
+    login_port: "{{ tsql_endpoint_port }}"
+    name: "{{ db_name }}"
+    state: present
+
 # Check for reboot and reboot if necessary
 - name: Check if reboot is required
   stat:
@@ -88,3 +103,5 @@
   local_action: wait_for host={{ ansible_ssh_host  }} state=started port=22 delay=30
   become: false
   when: reboot_required_file.stat.exists
+
+
