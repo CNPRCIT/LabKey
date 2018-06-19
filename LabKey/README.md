@@ -15,3 +15,6 @@ A vault file is used for sensitive data:
 * '<tomcat_home>' - Tomcat home on the server.
 * '<tomcat_mgr_uname>' - Tomcat manager username.
 * '<tomcat_mgr_pword>' - Tomcat manager password.
+
+I think you should use an
+`<addr>` element here instead.
