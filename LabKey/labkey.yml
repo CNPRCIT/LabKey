@@ -1,5 +1,7 @@
 ---
-- hosts: webserver
+- hosts: webserver  
+  vars_files:
+    - '/home/cnprc/lbky.yml'
   roles:
     - common
     - tomcat
