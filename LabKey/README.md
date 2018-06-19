@@ -28,7 +28,7 @@ The vault file in the playbooks is located at `</home/cnprc/lbky.yml>` and inclu
 The LabKey tomcat XML in the playbooks is prepopulated and resides at `</home/cnprc/labkey.xml>`
 
 # LabKey Download file.
-Ensure to change the name of the file in the `/defaults/main.yml` to reflect the name on your LabKey download page.
+Ensure to change the name of the file in the `/roles/labkey/defaults/main.yml` to reflect the name on your LabKey download page.
 Ensure the LabKey URL in the vault file points to your organizations download trunk.
 
 ## MS SQL
