@@ -33,3 +33,11 @@
      notify:
        - Wait for system.
      when: file.stat.exists == true
+     
+   - name: Wait 300 seconds for port 22 to become open
+     wait_for:
+       port: 22
+       host: '{{ ansible_ssh_host }}'
+       search_regex: OpenSSH
+       delay: 10
+     connection: local
