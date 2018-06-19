@@ -1,90 +1,90 @@
 ---         
 # Install MSSQL repo, key and update cache
-    - name: Import MS GPG Key
-      apt_key:
-        url: https://packages.microsoft.com/keys/microsoft.asc
-        state: present
+- name: Import MS GPG Key
+  apt_key:
+    url: https://packages.microsoft.com/keys/microsoft.asc
+    state: present
 
-    - name: Register MSSQL Repo
-      get_url:
-        url: "{{ ubuntu_server_repo_url }}"
-        dest: /etc/apt/sources.list.d/mssql-server.list
+- name: Register MSSQL Repo
+  get_url:
+    url: "{{ ubuntu_server_repo_url }}"
+    dest: /etc/apt/sources.list.d/mssql-server.list
 
-    - name: Refresh apt-get cache for MSSQL Server repo
-      apt:
-        update_cache: yes
+- name: Refresh apt-get cache for MSSQL Server repo
+  apt:
+    update_cache: yes
 
 # Intall MSSQL
-    - name: Install MSSQL
-      package:
-        name: mssql-server
-      state: latest
+- name: Install MSSQL
+  apt:
+    name: mssql-server
+    state: latest
     
-    - name: MSSQL Server setup
-      mssql_conf:
-       setup_sa_password: "{{ sa_password }}"
-       setup_pid: "{{ pid }}"
-       login_name: 'sa'
-       login_password: "{{ sa_password }}"
+- name: MSSQL Server setup
+  mssql_conf:
+    setup_sa_password: "{{ sa_password }}"
+    setup_pid: "{{ pid }}"
+    login_name: 'sa'
+    login_password: "{{ sa_password }}"
        
 # TSQL endpoint
-    - name: set TSQL endpoint port
-      mssql_conf:
-        name: network.tcpport
-        value: "{{ tsql_endpoint_port }}"
-        login_name: 'sa'
-        login_password: "{{ sa_password }}"
+- name: set TSQL endpoint port
+  mssql_conf:
+    name: network.tcpport
+    value: "{{ tsql_endpoint_port }}"
+    login_name: 'sa'
+    login_password: "{{ sa_password }}"
 
-    - name: open TSQL endpoint in firewall (Ubuntu)
-      ufw:
-        port: "{{ tsql_endpoint_port }}"
-        proto: tcp
-        rule: allow
+- name: open TSQL endpoint in firewall (Ubuntu)
+  ufw:
+    port: "{{ tsql_endpoint_port }}"
+    proto: tcp
+    rule: allow
 
 # Install mssql tools repo and update cache
-    - name: Install MSSQL tool repo
-      get_url:
-        url: "{{ ubuntu_tools_repo_url }}"
-        dest: /etc/apt/sources.list.d/mssql-tools.list
+- name: Install MSSQL tool repo
+  get_url:
+    url: "{{ ubuntu_tools_repo_url }}"
+    dest: /etc/apt/sources.list.d/mssql-tools.list
 
-    - name: Refresh apt-get cache for MSSQL tools repo
-      apt:
-        update_cache: yes
+- name: Refresh apt-get cache for MSSQL tools repo
+  apt:
+    update_cache: yes
 
 # Install MSSQL-tools
-    - name: Install MSSQL tools package
-      apt:
-        name: mssql-tools
-        state: latest
-      environment:
-        ACCEPT_EULA: 'y'
+- name: Install MSSQL tools package
+  apt:
+    name: mssql-tools
+    state: latest
+  environment:
+    ACCEPT_EULA: 'y'
 
 # Install odbc package for local connection
-    - name: Install UNIXODBC package
-      apt:
-        name: unixodbc-dev
-        state: latest
+- name: Install UNIXODBC package
+  apt:
+    name: unixodbc-dev
+    state: latest
 
 # Start MSSQL service
-    - name: Start MSSQL
-      service:
-        name: mssql-server
-        state: started
+- name: Start MSSQL
+  service:
+    name: mssql-server
+    state: started
         
 # Check for reboot and reboot if necessary
-    - name: Check if reboot is required
-      stat:
-        path: /var/run/reboot-required
-      register: reboot_required_file
+- name: Check if reboot is required
+  stat:
+    path: /var/run/reboot-required
+  register: reboot_required_file
 
-    - name: Rebooting machine
-      shell: sleep 2 && shutdown -r now
-      async: 1
-      poll: 0
-      ignore_errors: true
-      when: reboot_required_file.stat.exists
+- name: Rebooting machine
+  shell: sleep 2 && shutdown -r now
+  async: 1
+  poll: 0
+  ignore_errors: true
+  when: reboot_required_file.stat.exists
 
-    - name: Wait for reboot
-      local_action: wait_for host={{ ansible_ssh_host  }} state=started port=22 delay=30
-      become: false
-      when: reboot_required_file.stat.exists
+- name: Wait for reboot
+  local_action: wait_for host={{ ansible_ssh_host  }} state=started port=22 delay=30
+  become: false
+  when: reboot_required_file.stat.exists
