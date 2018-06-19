@@ -71,11 +71,6 @@
     name: mssql-server
     state: started
 
-# Install pymssql to create DB remotely.
-- name: Install pymssql
-  pip:
-    name: pymssql
-
 # Create LabKey DB
 - name: Create DB for LabKey
   mssql_db:
