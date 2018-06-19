@@ -71,6 +71,11 @@
     name: mssql-server
     state: started
 
+- name: Install pymssql
+  pip:
+    name: pymssql
+    state: latest
+
 # Create LabKey DB
 - name: Create DB for LabKey
   mssql_db:
