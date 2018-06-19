@@ -1,10 +1,4 @@
 ---
-  handlers:
-    - name: Wait for system.
-      local_action: wait_for host={{ ansible_ssh_host }} port=22 state=started delay=30 timeout=60
-      become: False
-
-  tasks:
   # Install MSSQL package
     - name: Import MS GPG Key
       apt_key:
