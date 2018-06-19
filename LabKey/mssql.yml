@@ -1,5 +1,7 @@
 ---
 - hosts: mssql
+  vars_files:
+    - '/home/cnprc/lbky.yml'
   roles:
     - common
     - mssql
