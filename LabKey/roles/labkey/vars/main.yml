@@ -1,8 +1,0 @@
----
-##Enter in the file name as it appears on the LabKey update page
-
-lbky_cnprc_file: LabKey18.2-SNAPSHOT-58506.512-cnprc-bin.tar.gz
-
-lbky_download_dir: /opt/lbky
-lbky_extract: "{{ lbky_cnprc_file | regex_replace('.tar.gz') }}"
-

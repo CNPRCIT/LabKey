@@ -1,6 +1,11 @@
 ---
-# defaults file for CNPRC LabKey Pull
-
-lbky_download_dir: /tmp/lbky
-lbky_aws_url: http://labkey.s3.amazonaws.com/downloads/cnprc/d/trunk/
+##Enter in the file name as it appears on the LabKey update page
+#
 lbky_cnprc_file: LabKey18.2-SNAPSHOT-58506.512-cnprc-bin.tar.gz
+#
+##
+lbky_download_dir: /opt/lbky
+lbky_extract: "{{ lbky_cnprc_file | regex_replace('.tar.gz') }}"
+
+ubuntu_server_repo_url: 'https://packages.microsoft.com/config/ubuntu/16.04/mssql-server-2017.list'
+ubuntu_tools_repo_url: 'https://packages.microsoft.com/config/ubuntu/16.04/prod.list'

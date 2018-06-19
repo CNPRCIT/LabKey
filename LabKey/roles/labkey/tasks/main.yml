@@ -1,103 +1,83 @@
 ---
-    - name: Create LabKey home directory
-      file:
-        path: "{{ lbky_home }}"
-        state: directory
-        owner: tomcat
-        group: root
-        mode: 0755
+- name: Create LabKey home directory
+  file:
+    path: "{{ lbky_home }}"
+    state: directory
+    owner: tomcat
+    group: root
+    mode: 0755
 
-    - name: Create download directory for LabKey pull
-      file:
-        path: "{{ lbky_download_dir }}"
-        state: directory
-        mode: 0755
+- name: Create download directory for LabKey pull
+  file:
+    path: "{{ lbky_download_dir }}"
+    state: directory
+    mode: 0755
 
-    - name: Download and Unarchive LabKey
-      unarchive:
-        src: "{{ lbky_aws_url }}/{{ lbky_cnprc_file }}"
-        dest: "{{ lbky_download_dir }}"
-        remote_src: yes
+- name: Download and Unarchive LabKey
+  unarchive:
+    src: "{{ lbky_aws_url }}/{{ lbky_cnprc_file }}"
+    dest: "{{ lbky_download_dir }}"
+    remote_src: yes
 
-    - name: Copy LabKey JAR files to tomcat-home/lib folder
-      copy:
-        src: "{{ lbky_download_dir }}/{{ lbky_extract }}/tomcat-lib/{{ item }}"
-        dest: "{{ tomcat_home }}/lib/"
-        owner: tomcat
-        group: tomcat
-        remote_src: yes
-      with_items:
-        - jtds.jar
-        - mail.jar
-        - mysql.jar
-        - postgresql.jar
-        - labkeyBootstrap.jar
+- name: Copy LabKey JAR files to tomcat-home/lib folder
+  copy:
+    src: "{{ lbky_download_dir }}/{{ lbky_extract }}/tomcat-lib/{{ item }}"
+    dest: "{{ tomcat_home }}/lib/"
+    owner: tomcat
+    group: tomcat
+    remote_src: yes
+  with_items:
+    - jtds.jar
+    - mail.jar
+    - mysql.jar
+    - postgresql.jar
+    - labkeyBootstrap.jar
 
 ## ansible copy does not do directories recursively, used synchronize (rsync)
-    - name: Copy LabKey directories to Labkey home
-      synchronize:
-        src: "{{ lbky_download_dir }}/{{ lbky_extract }}/{{ item }}"
-        dest: "{{ lbky_home }}"
-      with_items:
-        - labkeywebapp
-        - modules
-        - pipeline-lib
-      delegate_to: "{{ inventory_hostname }}"
+- name: Copy LabKey directories to Labkey home
+  synchronize:
+    src: "{{ lbky_download_dir }}/{{ lbky_extract }}/{{ item }}"
+    dest: "{{ lbky_home }}"
+  with_items:
+    - labkeywebapp
+    - modules
+    - pipeline-lib
+  delegate_to: "{{ inventory_hostname }}"
 
 # synchronize does not allow setting of permissions.
-    - name: Set directory permissions to Labkey home for tomcat
-      file:
-        path: "{{ lbky_home }}"
-        owner: tomcat
-        group: root
-        recurse: yes
-      
+- name: Set directory permissions to Labkey home for tomcat
+  file:
+    path: "{{ lbky_home }}"
+    owner: tomcat
+    group: root
+    recurse: yes
 
-#    - name: Replace default strings in LabKey Server config XML
-#      replace:
-#        path: "{{ lbky_download_dir }}/{{ lbky_extract }}/labkey.xml"
-#        regexp: "{{ item.regexp }}"
-#        replace: "{{ item.replace }}"
-#      with_items:
-#        - { regexp: '@@appDocBase@@', replace: '{{ lbky_home }}/labkeywebapp' }
-#       - { regexp: '@@jdbcUser@@', replace: '{{ jdbcUser }}' }
-#        - { regexp: '@@jdbcPassword@@', replace: '{{ jdbcPass }}' }
-#        - { regexp: 'org.postgresql.Driver', replace: 'net.sourceforge.jtds.jdbc.Driver' }
-#        - { regexp: 'jdbc:postgresql://localhost/labkey', replace: '{{ jdbc_url }}' }
-#        - { regexp: '@@smtpHost@@', replace: '{{ smtp_host }}' }
-#        - { regexp: '@@smtpUser@@', replace: '{{ smtp_user }}'}
+- name: Copy LabKey XML to tomcat/Catalina/localhost
+  copy:
+    src: '/home/cnprc/labkey.xml'
+    dest: "{{ tomcat_home }}/conf/Catalina/localhost"
+    owner: tomcat
+    group: tomcat
 
+- name: Reload and pick up config changes for Tomcat Service
+  systemd:
+    name: tomcat
+    state: restarted
+    daemon_reload: yes
 
-    - name: Copy LabKey XML to tomcat/Catalina/localhost
-      copy:
-#        src: "{{ lbky_download_dir }}/{{ lbky_extract }}/{{ item }}"
-        src: '/home/cnprc/labkey.xml'
-        dest: "{{ tomcat_home }}/conf/Catalina/localhost"
-        owner: tomcat
-        group: tomcat
-#        remote_src: yes
-#      with_items:
-#        - labkey.xml
+- name: Check if reboot is required
+  stat:
+    path: /var/run/reboot-required
+  register: reboot_required_file
 
-    - name: Reload and pick up config changes for Tomcat Service
-      systemd:
-        name: tomcat
-        state: restarted
-        daemon_reload: yes
+- name: Rebooting machine
+  shell: sleep 2 && shutdown -r now
+  async: 1
+  poll: 0
+  ignore_errors: true
+  when: reboot_required_file.stat.exists
 
-    - name: Check if reboot is required
-      stat:
-        path: /var/run/reboot-required
-      register: reboot_required_file
-
-    - name: Rebooting machine
-      shell: sleep 2 && shutdown -r now
-      async: 1
-      poll: 0
-      ignore_errors: true
-      when: reboot_required_file.stat.exists
-
-    - name: Wait for reboot
-      local_action: wait_for host={{ ansible_ssh_host  }} state=started port=22 delay=30
-      become: false
-      when: reboot_required_file.stat.exists
+- name: Wait for reboot
+  local_action: wait_for host={{ ansible_ssh_host  }} state=started port=22 delay=30
+  become: false
+  when: reboot_required_file.stat.exists
