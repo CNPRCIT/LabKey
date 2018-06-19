@@ -10,11 +10,8 @@ Ansible to install LabKey.
 
 ## Vault File
 A vault file is used for sensitive data:
-* '<lbky_aws_url>' - LabKey URL download for your organization.
-* '<lbky_home>' - LabKey home on the server.
-* '<tomcat_home>' - Tomcat home on the server.
-* '<tomcat_mgr_uname>' - Tomcat manager username.
-* '<tomcat_mgr_pword>' - Tomcat manager password.
-
-I think you should use an
-`<addr>` element here instead.
+* `<lbky_aws_url>` - LabKey URL download for your organization.
+* `<lbky_home>` - LabKey home on the server.
+* `<tomcat_home>` - Tomcat home on the server.
+* `<tomcat_mgr_uname>` - Tomcat manager username.
+* `<tomcat_mgr_pword>` - Tomcat manager password.
