@@ -2,10 +2,13 @@
 - hosts: webserver  
   become: true
   gather_facts: false
+  pre_tasks:
+    - setup:
+        filter: ansible_*
   vars_files:
     - '/home/cnprc/lbky.yml'
   roles:
     - common
-    - tomcat
+#    - tomcat
     - r_base
 #    - labkey
