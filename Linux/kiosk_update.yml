@@ -1,7 +1,0 @@
----
-- hosts: all
-  become: true
-
-  tasks:
-    - name: Update Kiosk
-      shell: bash <(curl -sL https://www.screenly.io/install-ose.sh)
