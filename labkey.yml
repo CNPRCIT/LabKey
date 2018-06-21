@@ -9,6 +9,7 @@
     - '/home/cnprc/lbky.yml'
   roles:
     - common
+    - java
     - tomcat
     - r_base
     - labkey
