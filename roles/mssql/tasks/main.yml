@@ -19,23 +19,26 @@
   apt:
     name: mssql-server
     state: latest
+
+- name: MSSQL Server Setup
+  shell: MSSQL_PID="{{ pid }}" MSSQL_SA_PASSWORD="{{ sa_password }}" /opt/mssql/bin/mssql-conf -n setup accept-eula
     
-- name: MSSQL Server setup
-  mssql_conf:
-    setup_sa_password: "{{ sa_password }}"
-    setup_pid: "{{ pid }}"
-    login_name: 'sa'
-    login_password: "{{ sa_password }}"
+#- name: MSSQL Server setup
+#  mssql_conf:
+#    setup_sa_password: "{{ sa_password }}"
+#    setup_pid: "{{ pid }}"
+#    login_name: 'sa'
+#    login_password: "{{ sa_password }}"
        
 # TSQL endpoint
-- name: set TSQL endpoint port
-  mssql_conf:
-    name: network.tcpport
-    value: "{{ tsql_endpoint_port }}"
-    login_name: 'sa'
-    login_password: "{{ sa_password }}"
+#- name: set TSQL endpoint port
+ # mssql_conf:
+ #   name: network.tcpport
+ #   value: "{{ tsql_endpoint_port }}"
+ #   login_name: 'sa'
+ #   login_password: "{{ sa_password }}"
 
-- name: open TSQL endpoint in firewall (Ubuntu)
+- name: open SQL endpoint in firewall
   ufw:
     port: "{{ tsql_endpoint_port }}"
     proto: tcp
