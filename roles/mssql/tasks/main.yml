@@ -1,16 +1,21 @@
 ---         
-# Install MSSQL repo, key and update cache
+# Install MSSQL repo and key 
 - name: Import MS GPG Key
   apt_key:
     url: https://packages.microsoft.com/keys/microsoft.asc
     state: present
 
-- name: Register MSSQL Repo
+- name: Register MSSQL Server repo
   get_url:
     url: "{{ ubuntu_server_repo_url }}"
     dest: /etc/apt/sources.list.d/mssql-server.list
 
-- name: Refresh apt-get cache for MSSQL Server repo
+- name: Register MSSQL Tool repo
+  get_url:
+    url: "{{ ubuntu_tools_repo_url }}"
+    dest: /etc/apt/sources.list.d/mssql-tools.list
+
+- name: Refresh apt-get cache for MSSQL repos
   apt:
     update_cache: yes
 
@@ -20,8 +25,10 @@
     name: mssql-server
     state: latest
 
-- name: MSSQL Server Setup
-  shell: MSSQL_PID="{{ pid }}" MSSQL_SA_PASSWORD="{{ sa_password }}" /opt/mssql/bin/mssql-conf -n setup accept-eula
+- name: Run MSSQL Server Setup
+  shell: MSSQL_PID="{{ mssql_pid }}" MSSQL_SA_PASSWORD="{{ mssql_sa_password }}" /opt/mssql/bin/mssql-conf -n setup accept-eula
+  register: setup_output
+  failed_when:  "'Setup has completed successfully. SQL Server is now starting.' not in setup_output.stdout"
     
 #- name: MSSQL Server setup
 #  mssql_conf:
@@ -40,19 +47,9 @@
 
 - name: open SQL endpoint in firewall
   ufw:
-    port: "{{ tsql_endpoint_port }}"
+    port: "{{ mssql_port }}"
     proto: tcp
     rule: allow
-
-# Install mssql tools repo and update cache
-- name: Install MSSQL tool repo
-  get_url:
-    url: "{{ ubuntu_tools_repo_url }}"
-    dest: /etc/apt/sources.list.d/mssql-tools.list
-
-- name: Refresh apt-get cache for MSSQL tools repo
-  apt:
-    update_cache: yes
 
 # Install MSSQL-tools
 - name: Install MSSQL tools package
@@ -74,19 +71,19 @@
     name: mssql-server
     state: started
 
-- name: Install pymssql
+- name: Install pymssql for playbooks against DB Server
   pip:
     name: pymssql
     state: latest
 
 # Create LabKey DB
-- name: Create DB for LabKey
+- name: Create MSSQL DB for LabKey
   mssql_db:
-    login_host: "{{ db_server }}"
+    login_host: "{{ mssql_server }}"
     login_user: "{{ jdbcUser }}"
     login_password: "{{ jdbcPass }}"
-    login_port: "{{ tsql_endpoint_port }}"
-    name: "{{ db_name }}"
+    login_port: "{{ mssql_port }}"
+    name: "{{ mssql_name }}"
     state: present
 
 # Check for reboot and reboot if necessary
@@ -103,7 +100,7 @@
   when: reboot_required_file.stat.exists
 
 - name: Wait for reboot
-  local_action: wait_for host={{ ansible_ssh_host  }} state=started port=22 delay=30
+  local_action: wait_for host={{ ansible_ssh_host }} state=started port=22 delay=30
   become: false
   when: reboot_required_file.stat.exists
 
