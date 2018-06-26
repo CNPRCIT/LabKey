@@ -83,7 +83,7 @@
     login_user: "{{ jdbcUser }}"
     login_password: "{{ jdbcPass }}"
     login_port: "{{ mssql_port }}"
-    name: "{{ mssql_name }}"
+    name: "{{ mssql_db_name }}"
     state: present
 
 # Check for reboot and reboot if necessary
